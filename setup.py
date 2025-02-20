@@ -20,6 +20,7 @@ setup(
         "pandas",
         "requests",
         "python-dotenv",
+        "json"
     ],
     python_requires=">=3.6",  # Versión mínima de Python compatible
 )
