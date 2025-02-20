@@ -8,7 +8,7 @@ setup(
     description="Un paquete con funciones diseñadas para facilitar la conexión con distintas APIs",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/usuario/mi_proyecto",  # URL de tu repositorio en GitHub
+    url="https://github.com/SpiderCoop/API_Caller",  # URL de tu repositorio en GitHub
     packages=find_packages(),  # Detecta automáticamente los submódulos
     classifiers=[
         "Programming Language :: Python :: 3",
