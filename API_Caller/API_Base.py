@@ -8,7 +8,6 @@ class API_Base:
     def _make_request(self, endpoint, headers=None, params=None):
         # Construir la URL
         url = self.base_url + endpoint
-        print(url)
 
         if headers is None:
             headers = {}
