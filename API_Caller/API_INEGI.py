@@ -32,21 +32,12 @@ class API_INEGI(API_Base):
         Recibe los datos de las fechas o periodos de la serie y, de acuerdo con la metadata y descripcion revisada desde la API de INEGI, devuelve las fechas correspondientes en tipo datetime.
 
         Args:
-
             time_periods (list): Los periodos de tiempo de la serie.
             frequency_id (int): El ID de la frecuencia de la serie.
 
         Returns:
             datetime.date: Una lista de objetos datetime.date con las fechas correspondientes a los periodos de tiempo de la serie.
             string: Un objeto string con la descripcion de la frecuencia de la serie.
-                            
-        Raises:
-            Exception: Si la solicitud a la API de Banxico falla, devuelve un mensaje con el código de error y la respuesta.
-
-        Example:
-            Obtener la última observación de varias series:
-            >>> df, dict = get_BIE_data(['736183','628208'],last_data=True)
-
         """
 
         # Definir url de API
@@ -128,6 +119,15 @@ class API_INEGI(API_Base):
 
 
     def _unit_handler(self, unit_id:int):
+        """
+        Recibe el identificador de las unidades de medida de la serie y, de acuerdo con la metadata y descripcion revisada desde la API de INEGI, devuelve la descripcion de las unidades de medida.
+
+        Args:
+            unit_id (int): El identificador de la unidad de medida.
+
+        Returns:
+            string: Un objeto string con la descripcion de las unidades de la serie.
+        """
         
         # Definir url de API
         endpoint = f"/CL_UNIT/{unit_id}/es/BIE/2.0/{self.api_key}?type=json"
@@ -164,6 +164,7 @@ class API_INEGI(API_Base):
             >>> df, dict = get_BIE_data(['736183','628208'],last_data=True)
 
         """
+
         # Verifica tipo y cambia el formato para adecuarse a la API
         if not isinstance(last_data, bool):
             raise ValueError(f"last_data debe ser un valor booleano.")
@@ -234,19 +235,17 @@ if __name__ == '__main__':
 
     # Carga variables de un archivo .env (para almacenar el token de la API de INEGI)
     load_dotenv()
-
-    # Token
     INEGI_Token = os.environ.get("INEGI_Token")
 
+    # Ejemplo de uso de la clase API_INEGI
     inegi_api = API_INEGI(INEGI_Token)
+    serie_id=['736183','628208']
 
-    # IDs 736181, 454527, 628208, 736183 (PIB constante 2018 desestacionalizado var anual)
-    serie, serie_info = inegi_api.get_data(serie_id=['736183','628208'],last_data=False)
-    print(serie)
-    print('\n')
+    # Obtener datos de las series de INEGI 628208, 736183 (PIB constante 2018 desestacionalizado var anual)
+    serie, serie_info = inegi_api.get_data(serie_id,last_data=False)
+    
     print(serie_info)
     print('\n')
     print(serie.loc[pd.date_range(start='2024-01-01', end='2024-12-01', freq='QS-MAR').date,'736183'])
-
     print('\n')
 

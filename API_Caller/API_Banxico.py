@@ -188,8 +188,6 @@ if __name__ == '__main__':
 
     # Carga variables de un archivo .env (para almacenar el token de la API de Banxico)
     load_dotenv()
-
-    # Obtenemos el token para la API de Banxico
     BANXICO_TOKEN = os.environ.get("BANXICO_TOKEN")
 
     # Ejemplo de uso de la clase API_Banxico
@@ -199,9 +197,7 @@ if __name__ == '__main__':
     # Obtener datos de la serie desde 2023-01-01 hasta hoy
     serie, serie_info = banxico_api.get_data(serie_id, fecha_inicio='2023-01-01',variacion='PorcAnual')
 
-    print('\n')
     print(serie_info)
     print('\n')
     print(serie.loc[pd.date_range(start='2024-01-01', end='2024-12-01', freq='QS-MAR').date,'SR17622'])
-
     print('\n')
