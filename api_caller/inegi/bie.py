@@ -61,6 +61,16 @@ class INEGI_BIE(BaseAPI):
     
     
     def _transform_time_periods(self, time_periods:list, frequency_id:int):
+        """
+        Recibe los datos de los periodos de tiempo de la serie y, de acuerdo con la metadata y descripcion revisada desde la API de INEGI, devuelve las fechas correspondientes en tipo datetime.
+
+        Args:
+            time_periods (list): Los periodos de tiempo de la serie.
+            frequency_id (int): El ID de la frecuencia de la serie.
+        
+        Returns:
+            datetime.date: Una lista de objetos datetime.date con las fechas correspondientes a los periodos de tiempo de la serie.
+        """
 
         if frequency_id == 1: # 10 años
         
