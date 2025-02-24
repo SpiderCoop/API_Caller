@@ -9,7 +9,7 @@ if __name__ == '__main__':
     import sys
     import os
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from API_Father.Base_api import BaseAPI
+    from api_caller.baseapi.baseapi import BaseAPI
     
 else:
     from ...API_Father.Base_api import BaseAPI
