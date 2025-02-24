@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="Banxico_api",  # Nombre del paquete (debe coincidir con la carpeta del módulo)
@@ -9,7 +9,7 @@ setup(
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/SpiderCoop/API_Caller/tree/main/Banxico_api",  # URL de tu repositorio en GitHub
-    packages=['Banxico_api'],  
+    packages=find_packages(),  
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
