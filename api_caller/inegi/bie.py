@@ -5,26 +5,18 @@ import pandas as pd
 from datetime import datetime, date
 import requests
 
-if __name__ == '__main__':
-    import sys
-    import os
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from api_caller.baseapi.baseapi import BaseAPI
-    
-else:
-    from ...API_Father.Base_api import BaseAPI
-
+from baseapi.baseapi import BaseAPI
 
 # Clase -------------------------------------------------------------------------
 
-class InegiAPI(BaseAPI):
+class INEGI_BIE(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml")
 
     # Funcion para cambiar la presentacion de los periodos de tiempo de la serie de acuerdo con las especificacionesde la metadata de la API de INEGI
-    def _freq_handler(self, time_periods:list, frequency_id:int):
+    def _freq_handler(self, frequency_id:int):
         """
-        Recibe los datos de las fechas o periodos de la serie y, de acuerdo con la metadata y descripcion revisada desde la API de INEGI, devuelve las fechas correspondientes en tipo datetime.
+        Recibe los datos de la frecuencia de actualización de los datos, de acuerdo con la metadata y descripcion revisada desde la API de INEGI, devuelve las fechas correspondientes en tipo datetime.
 
         Args:
             time_periods (list): Los periodos de tiempo de la serie.
@@ -42,6 +34,33 @@ class InegiAPI(BaseAPI):
         data_json = self._make_request(endpoint=endpoint)
         serie_data = data_json['CODE'][0]
         freq_str = serie_data['Description']
+
+        return freq_str
+    
+    
+    def _unit_handler(self, unit_id:int):
+        """
+        Recibe el identificador de las unidades de medida de la serie y, de acuerdo con la metadata y descripcion revisada desde la API de INEGI, devuelve la descripcion de las unidades de medida.
+
+        Args:
+            unit_id (int): El identificador de la unidad de medida.
+
+        Returns:
+            string: Un objeto string con la descripcion de las unidades de la serie.
+        """
+        
+        # Definir url de API
+        endpoint = f"/CL_UNIT/{unit_id}/es/BIE/2.0/{self._BaseAPI__api_key}?type=json"
+
+        # Extraer y convertir datos 
+        data_json = self._make_request(endpoint=endpoint)
+        serie_data = data_json['CODE'][0]
+        unit_str = serie_data['Description']
+
+        return unit_str
+    
+    
+    def _transform_time_periods(self, time_periods:list, frequency_id:int):
 
         if frequency_id == 1: # 10 años
         
@@ -110,33 +129,97 @@ class InegiAPI(BaseAPI):
         # Cambiamos el tipo de datos a datetime
         time_periods_formatted = pd.to_datetime(time_periods_formatted).date
 
-        return time_periods_formatted, freq_str
-
-
-    def _unit_handler(self, unit_id:int):
+        return time_periods_formatted
+    
+    def _set_params(self, serie_id:str | list, last_data:bool=False) -> str:
         """
-        Recibe el identificador de las unidades de medida de la serie y, de acuerdo con la metadata y descripcion revisada desde la API de INEGI, devuelve la descripcion de las unidades de medida.
+        Establece los parámetros necesarios para realizar una solicitud a la API de INEGI (BIE) y los devuelve en un diccionario.
 
         Args:
-            unit_id (int): El identificador de la unidad de medida.
+            serie_id (str | list): El ID de la serie o una lista de IDs de series a consultar desde la API de Banxico. 
+                                Si se proporciona un solo ID, puede ser una cadena de texto (str).
+            last_data (bool, optional): Si se establece en True, obtendrá solo las últimas observaciones disponibles de la serie.
+                                    Por defecto es False.
 
         Returns:
-            string: Un objeto string con la descripcion de las unidades de la serie.
+            dict: Un diccionario con los parámetros necesarios para realizar una solicitud a la API de Banxico.
+                            
+        Raises:
+            ValueError: Si los argumentos no son del tipo esperado.
+
         """
-        
+
+        # Verifica tipo y cambia el formato para adecuarse a la API
+        if not isinstance(last_data, bool):
+            raise ValueError(f"last_data debe ser un valor booleano.")
+        if last_data:
+            last_data = 'true'
+        else:
+            last_data = 'false'
+
+        # Validar los tipos de datos de los argumentos
+        if isinstance(serie_id, str):
+            serie_id = [serie_id]
+        elif isinstance(serie_id, list) and all(isinstance(i, str) for i in serie_id):
+            pass
+        else:
+            raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
+
         # Definir url de API
-        endpoint = f"/CL_UNIT/{unit_id}/es/BIE/2.0/{self._BaseAPI__api_key}?type=json"
+        endpoint = f"/INDICATOR/{','.join(serie_id)}/es/0700/{last_data}/BIE/2.0/{self._BaseAPI__api_key}?type=json"
 
-        # Extraer y convertir datos 
+        return endpoint
+
+
+    def get_metadata(self, serie_id:str | list) -> dict:
+        """
+        Obtiene la metadata de una serie económica o estadística desde la API de INEGI (BIE) y la devuelve en un diccionario.
+
+        Args:
+            serie_id (str | list): El ID de la serie o una lista de IDs de series a consultar desde la API de Banxico. 
+                                Si se proporciona un solo ID, puede ser una cadena de texto (str).
+
+        Returns:
+            dict: Un diccionario con informacion de la serie
+                            
+        Raises:
+            Exception: Si la solicitud a la API de Banxico falla, devuelve un mensaje con el código de error y la respuesta.
+
+        Example:
+            Obtener la metadata de una serie:
+            >>> serie_info = get_metadata('736183')
+
+        """
+
+        # Definir url de API y realizar la solicitud
+        endpoint = self._set_params(serie_id, last_data=False)
         data_json = self._make_request(endpoint=endpoint)
-        serie_data = data_json['CODE'][0]
-        unit_str = serie_data['Description']
 
-        return unit_str
+        # Inicializar un diccionario vacío para almacenar los metadatos
+        series_dict = {}
+
+        # Extraer y convertir datos
+        data_json = self._make_request(endpoint=endpoint)
+
+        for serie_data in data_json['Series']:
+        
+            # Extraer metadatos
+            serie_id = serie_data['INDICADOR']
+            freq = int(serie_data['FREQ'])
+            unit = int(serie_data['UNIT'])
+
+            # Tranforma las unidades de medida y freciuencia de actualizacion para que sea mas legible
+            freq_str = self._freq_handler(freq)
+            unit_str = self._unit_handler(unit)
+
+            # Se crea el diccionario con la metadata de la serie
+            series_dict[serie_id] = {'periodicidad': freq_str, 'unidad': unit_str}
+        
+        return series_dict
 
 
     # Función para obtener los datos de una serie desde la API de INEGI
-    def get_data(self, serie_id:str | list, last_data:bool=False) -> tuple[pd.DataFrame, dict]:
+    def get_data(self, serie_id:str | list, last_data:bool=False) -> pd.DataFrame:
         """
         Obtiene datos de series económicas y estadísticas desde la API de INEGI (BIE) y los devuelve en un DataFrame de pandas.
 
@@ -160,38 +243,18 @@ class InegiAPI(BaseAPI):
 
         """
 
-        # Verifica tipo y cambia el formato para adecuarse a la API
-        if not isinstance(last_data, bool):
-            raise ValueError(f"last_data debe ser un valor booleano.")
-        if last_data:
-            last_data = 'true'
-        else:
-            last_data = 'false'
-
-        # Validar los tipos de datos de los argumentos
-        if isinstance(serie_id, str):
-            serie_id = [serie_id]
-        elif isinstance(serie_id, list) and all(isinstance(i, str) for i in serie_id):
-            pass
-        else:
-            raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
-
-        # Definir url de API
-        endpoint = f"/INDICATOR/{','.join(serie_id)}/es/0700/{last_data}/BIE/2.0/{self._BaseAPI__api_key}?type=json"
-
-        # Inicializar un DataFrame vacío para almacenar los datos y un diccionario para almacenar los metadatos
-        series_df = pd.DataFrame()
-        series_dict = {}
-
-        # Extraer y convertir datos
+        # Definir url de API y realizar la solicitud
+        endpoint = self._set_params(serie_id, last_data)
         data_json = self._make_request(endpoint=endpoint)
+
+        # Inicializar un DataFrame vacío para almacenar los datos
+        series_df = pd.DataFrame()
 
         for serie_data in data_json['Series']:
         
             # Extraer metadatos
             serie_id = serie_data['INDICADOR']
             freq = int(serie_data['FREQ'])
-            unit = int(serie_data['UNIT'])
 
             # Extraer datos de la serie
             obs = serie_data['OBSERVATIONS']
@@ -201,18 +264,11 @@ class InegiAPI(BaseAPI):
             time_periods = [entry['TIME_PERIOD'] for entry in obs]
 
             # Transforma los periodos y frecuencia para que sea mas legible
-            time_periods_formatted, freq_str = self._freq_handler(time_periods, freq)
-
-            # Tranforma la unidad de medida para que sea mas legible
-            unit_str = self._unit_handler(unit)
-
-            # Se crea el diccionario con la metadata de la serie
-            series_dict[serie_id] = {'periodicidad': freq_str, 'unidad': unit_str}
+            time_periods_formatted, freq_str = self._transform_time_periods(time_periods, freq)
 
             # Crear una serie de pandas con los datos obtenidos
             serie = pd.Series(obs_values, index=time_periods_formatted, name=serie_id)
 
-            
             # Agregar la serie al DataFrame
             series_df = pd.concat([series_df, serie], axis=1, join='outer')
         
@@ -220,28 +276,5 @@ class InegiAPI(BaseAPI):
         # Ordenar el DataFrame por fecha
         series_df = series_df.sort_index()
         
-        return series_df, series_dict
-
-
-
-# Ejemplo de uso
-
-if __name__ == '__main__':
-
-    # Carga variables de un archivo .env (para almacenar el token de la API de INEGI)
-    from dotenv import load_dotenv
-    load_dotenv()
-    INEGI_Token = os.environ.get("INEGI_Token")
-
-    # Ejemplo de uso de la clase API_INEGI
-    inegi_api = InegiAPI(INEGI_Token)
-    serie_id=['736183','628208']
-
-    # Obtener datos de las series de INEGI 628208, 736183 (PIB constante 2018 desestacionalizado var anual)
-    serie, serie_info = inegi_api.get_data(serie_id,last_data=False)
-    
-    print(serie_info)
-    print('\n')
-    print(serie.loc[pd.date_range(start='2024-01-01', end='2024-12-01', freq='QS-MAR').date,'736183'])
-    print('\n')
+        return series_df
 
