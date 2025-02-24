@@ -7,15 +7,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import requests
 
-
-if __name__ == '__main__':
-    import os
-    import sys
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-    from API_Father.Base_api import BaseAPI
-    
-else:
-    from ..API_Father.Base_api import BaseAPI
+from ..API_Father.Base_api import BaseAPI
 
 # Clase ---------------------------------------------------------------------------------------
 
@@ -23,7 +15,7 @@ class BanxicoSIE(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://www.banxico.org.mx/SieAPIRest/service/v1")
 
-    def _set_params(self,  ult_obs:bool=False, fecha_inicio:str='2000-01-01', fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False):
+    def _set_params(self,serie_id:str | list,  ult_obs:bool=False, fecha_inicio:str='2000-01-01', fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False):
         
         # Validar los tipos de datos de los parámetros
         if not isinstance(ult_obs, bool):
@@ -177,13 +169,10 @@ class BanxicoSIE(BaseAPI):
 
 
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud
-        endpoint_datos, headers = self._set_params(ult_obs, fecha_inicio, fecha_fin, variacion, sin_decimales)
+        endpoint_datos, headers = self._set_params(serie_id, ult_obs, fecha_inicio, fecha_fin, variacion, sin_decimales)
         data_json = self._make_request(endpoint_datos, headers=headers)
 
         # Definir la URL de la API con el ID de la serie para obtener los metadatos de las series y realizar la solicitud
-        endpoint_metadatos = f"/series/{','.join(serie_id)}"
-        metadata_json = self._make_request(endpoint_metadatos, headers=headers)
-
         metadata = self.get_metadata(serie_id)
         
         # Inicializar un DataFrame vacío para almacenar los datos de las series
@@ -218,22 +207,3 @@ class BanxicoSIE(BaseAPI):
 
         return series_df
 
-
-# Ejemplo de uso
-if __name__ == '__main__':
-
-    # Carga variables de un archivo .env (para almacenar el token de la API de Banxico)
-    from dotenv import load_dotenv
-    load_dotenv()
-    BANXICO_TOKEN = os.environ.get("BANXICO_TOKEN")
-
-    # Ejemplo de uso de la clase API_Banxico
-    banxico_api = BanxicoSIE(BANXICO_TOKEN)
-    serie_id = ['SR17622', 'SF61745', 'SP68257', 'SF43718']
-
-    # Obtener datos de la serie desde 2023-01-01 hasta hoy
-    serie = banxico_api.get_data(serie_id, fecha_inicio='2023-01-01',variacion='PorcAnual')
-
-    print('\n')
-    print(serie.loc[pd.date_range(start='2024-01-01', end='2024-12-01', freq='QS-MAR').date,'SR17622'])
-    print('\n')
