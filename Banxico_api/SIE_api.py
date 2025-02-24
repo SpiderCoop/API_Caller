@@ -11,7 +11,7 @@ import requests
 if __name__ == '__main__':
     import os
     import sys
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
     from API_Father.Base_api import BaseAPI
     
 else:
@@ -19,7 +19,7 @@ else:
 
 # Clase ---------------------------------------------------------------------------------------
 
-class BanxicoAPI(BaseAPI):
+class BanxicoSIE(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://www.banxico.org.mx/SieAPIRest/service/v1")
 
@@ -228,7 +228,7 @@ if __name__ == '__main__':
     BANXICO_TOKEN = os.environ.get("BANXICO_TOKEN")
 
     # Ejemplo de uso de la clase API_Banxico
-    banxico_api = BanxicoAPI(BANXICO_TOKEN)
+    banxico_api = BanxicoSIE(BANXICO_TOKEN)
     serie_id = ['SR17622', 'SF61745', 'SP68257', 'SF43718']
 
     # Obtener datos de la serie desde 2023-01-01 hasta hoy
