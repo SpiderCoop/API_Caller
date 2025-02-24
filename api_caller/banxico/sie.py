@@ -7,7 +7,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import requests
 
-from ..baseapi.baseapi import BaseAPI
+from baseapi.baseapi import BaseAPI
 
 # Clase ---------------------------------------------------------------------------------------
 

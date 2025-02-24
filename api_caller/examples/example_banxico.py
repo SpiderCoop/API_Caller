@@ -1,5 +1,8 @@
 # Ejemplo de uso
-    
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from banxico.sie import BanxicoSIE
 import pandas as pd
 import os
