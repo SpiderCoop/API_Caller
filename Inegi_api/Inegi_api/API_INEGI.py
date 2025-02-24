@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 28 21:20:28 2024
 
-@author: DJIMENEZ
-
-"""
 # Librerias necesarias -------------------------------------------------------------------------
 
 import os
