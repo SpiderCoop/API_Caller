@@ -1,7 +1,6 @@
 
 # Librerias necesarias -------------------------------------------------------------------------
 
-
 import pandas as pd
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -11,12 +10,18 @@ from baseapi.baseapi import BaseAPI
 
 # Clase ---------------------------------------------------------------------------------------
 
-class BanxicoSIE(BaseAPI):
+class Banxico_SIE(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://www.banxico.org.mx/SieAPIRest/service/v1")
 
-    def _set_params(self,serie_id:str | list,  ult_obs:bool=False, fecha_inicio:str='2000-01-01', fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False):
+    def _set_params(self,serie_id:str | list,  ult_obs:bool=False, fecha_inicio:str='2000-01-01', fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False, get_metadata:bool=False) -> tuple:
         
+        # Encabezados para la solicitud con el token de la API
+        headers = {
+            'Bmx-Token': self._BaseAPI__api_key
+        }
+
+
         # Validar los tipos de datos de los parámetros
         if not isinstance(ult_obs, bool):
             raise ValueError(f"ult_obs debe ser un valor booleano.")
@@ -30,8 +35,17 @@ class BanxicoSIE(BaseAPI):
         if not isinstance(sin_decimales, bool):
             raise ValueError(f"sin_decimales debe ser un valor booleano.")
         
+        if not isinstance(get_metadata, bool):
+            raise ValueError(f"get_metadata debe ser un valor booleano.")
+        
+        
+        # Devuelve la URL de la API y los encabezados si se solicitan los metadatos
+        if get_metadata:
+            endpoint = f"/series/{','.join(serie_id)}"
+            return endpoint, headers
+        
 
-        # Definir la URL de la API
+        # Definir la URL de la API con el ID de la serie para obtener los datos de las series
         if ult_obs:
             # Validar que si ult_obs es True, no se proporcionen fechas de inicio y fin
             if (fecha_inicio != '2000-01-01' or fecha_fin != datetime.today().strftime('%Y-%m-%d')):
@@ -74,10 +88,6 @@ class BanxicoSIE(BaseAPI):
         if additional_params_str:
             endpoint = f"{endpoint}?{additional_params_str}"
 
-        # Encabezados para la solicitud con el token de la API
-        headers = {
-            'Bmx-Token': self._BaseAPI__api_key
-        }
         
         return endpoint, headers
     
@@ -108,11 +118,8 @@ class BanxicoSIE(BaseAPI):
             raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
         
         # Definir la URL de la API con el ID de la serie para obtener los metadatos de las series y realizar la solicitud
-        endpoint_metadatos = f"/series/{','.join(serie_id)}"
-        headers = {
-            'Bmx-Token': self._BaseAPI__api_key
-        }
-        metadata_json = self._make_request(endpoint_metadatos, headers=headers)
+        endpoint, headers = self._set_params(serie_id, get_metadata=True)
+        metadata_json = self._make_request(endpoint, headers=headers)
         
         # Inicializar un diccionario para almacenar los metadatos
         series_dict = {}
