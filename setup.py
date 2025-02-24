@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="API_Caller",  # Nombre del paquete (debe coincidir con la carpeta del módulo)
+    name="api_caller",  # Nombre del paquete (debe coincidir con la carpeta del módulo)
     version="0.1.0",  # Versión inicial del paquete
     author="David Jiménez Cooper",
     author_email="david.jimenez.cooper@gmail.com",
