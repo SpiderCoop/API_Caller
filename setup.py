@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="Inegi_api",  # Nombre del paquete (debe coincidir con la carpeta del módulo)
+    name="API_Caller",  # Nombre del paquete (debe coincidir con la carpeta del módulo)
     version="0.1.0",  # Versión inicial del paquete
     author="David Jiménez Cooper",
     author_email="david.jimenez.cooper@gmail.com",
-    description="Un paquete con funciones diseñadas para facilitar la conexión con las diferentes API's del Instituto Nacional de Estadística y Geografía",
+    description="Un paquete con funciones diseñadas para facilitar la conexión con diferentes API's",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/SpiderCoop/API_Caller",  # URL de tu repositorio en GitHub
