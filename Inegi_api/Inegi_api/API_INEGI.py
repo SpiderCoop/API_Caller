@@ -1,13 +1,13 @@
 
 # Librerias necesarias -------------------------------------------------------------------------
 
-import os
 import pandas as pd
 from datetime import datetime, date
-from dotenv import load_dotenv
+import requests
 
 if __name__ == '__main__':
     import sys
+    import os
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
     from API_Father.Base_api import Base_api
     
@@ -229,6 +229,7 @@ class API_INEGI(Base_api):
 if __name__ == '__main__':
 
     # Carga variables de un archivo .env (para almacenar el token de la API de INEGI)
+    from dotenv import load_dotenv
     load_dotenv()
     INEGI_Token = os.environ.get("INEGI_Token")
 

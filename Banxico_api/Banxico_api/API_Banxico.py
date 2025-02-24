@@ -1,15 +1,15 @@
 
 # Librerias necesarias -------------------------------------------------------------------------
 
-import os
+
 import pandas as pd
-import numpy as np
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from dotenv import load_dotenv
 import requests
 
+
 if __name__ == '__main__':
+    import os
     import sys
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
     from API_Father.Base_api import Base_api
@@ -197,7 +197,7 @@ class API_Banxico(Base_api):
             serie_data = serie_data['datos']
 
             # Extraer los valores y las fechas
-            obs_values = [float(entry['dato'].replace(",", "")) if entry['dato'] != 'N/E' else np.nan for entry in serie_data]
+            obs_values = [float(entry['dato'].replace(",", "")) if entry['dato'] != 'N/E' else pd.NA for entry in serie_data]
             time_periods = [entry['fecha'] for entry in serie_data]
 
             # Formatear los periodos de tiempo
@@ -223,6 +223,7 @@ class API_Banxico(Base_api):
 if __name__ == '__main__':
 
     # Carga variables de un archivo .env (para almacenar el token de la API de Banxico)
+    from dotenv import load_dotenv
     load_dotenv()
     BANXICO_TOKEN = os.environ.get("BANXICO_TOKEN")
 
