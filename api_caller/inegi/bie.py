@@ -264,7 +264,7 @@ class INEGI_BIE(BaseAPI):
             time_periods = [entry['TIME_PERIOD'] for entry in obs]
 
             # Transforma los periodos y frecuencia para que sea mas legible
-            time_periods_formatted, freq_str = self._transform_time_periods(time_periods, freq)
+            time_periods_formatted = self._transform_time_periods(time_periods, freq)
 
             # Crear una serie de pandas con los datos obtenidos
             serie = pd.Series(obs_values, index=time_periods_formatted, name=serie_id)
