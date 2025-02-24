@@ -125,7 +125,7 @@ class BanxicoSIE(BaseAPI):
     
 
     # Función para obtener los datos de una serie desde la API de Banxico
-    def get_data(self, serie_id:str | list, ult_obs:bool=False, fecha_inicio:str='2000-01-01', fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False) -> tuple[pd.DataFrame, dict]:
+    def get_data(self, serie_id:str | list, ult_obs:bool=False, fecha_inicio:str='2000-01-01', fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False) -> pd.DataFrame:
         """
         Obtiene datos de series económicas desde la API de Banxico (SIE) y los devuelve en un DataFrame de pandas.
 
