@@ -15,7 +15,7 @@ if __name__ == '__main__':
     from API_Father.Base_api import BaseAPI
     
 else:
-    from ...API_Father.Base_api import BaseAPI
+    from ..API_Father.Base_api import BaseAPI
 
 # Clase ---------------------------------------------------------------------------------------
 

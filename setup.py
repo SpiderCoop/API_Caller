@@ -1,15 +1,15 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name="Banxico_api",  # Nombre del paquete (debe coincidir con la carpeta del módulo)
+    name="Inegi_api",  # Nombre del paquete (debe coincidir con la carpeta del módulo)
     version="0.1.0",  # Versión inicial del paquete
     author="David Jiménez Cooper",
     author_email="david.jimenez.cooper@gmail.com",
-    description="Un paquete con funciones diseñadas para facilitar la conexión con la API del Sistema de Información Económica de Banco de México",
+    description="Un paquete con funciones diseñadas para facilitar la conexión con las diferentes API's del Instituto Nacional de Estadística y Geografía",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/SpiderCoop/API_Caller/tree/main/Banxico_api",  # URL de tu repositorio en GitHub
-    packages=['Banxico_api'],  
+    url="https://github.com/SpiderCoop/API_Caller",  # URL de tu repositorio en GitHub
+    packages=find_packages(),  # Detecta automáticamente los submódulos
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
