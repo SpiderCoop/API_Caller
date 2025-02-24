@@ -11,10 +11,10 @@ import os
 # Carga variables de un archivo .env (para almacenar el token de la API de INEGI)
 from dotenv import load_dotenv
 load_dotenv()
-INEGI_Token = os.environ.get("INEGI_Token")
+INEGI_BIE_Token = os.environ.get("INEGI_BIE_Token")
 
 # Ejemplo de uso de la clase API_INEGI
-inegi_api = INEGI_BIE(INEGI_Token)
+inegi_api = INEGI_BIE(INEGI_BIE_Token)
 serie_id=['736183','628208']
 
 # Obtener datos de las series de INEGI 628208, 736183 (PIB constante 2018 desestacionalizado var anual)

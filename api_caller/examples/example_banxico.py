@@ -10,10 +10,10 @@ import os
 # Carga variables de un archivo .env (para almacenar el token de la API de Banxico)
 from dotenv import load_dotenv
 load_dotenv()
-BANXICO_TOKEN = os.environ.get("BANXICO_TOKEN")
+Banxico_SIE_Token = os.environ.get("Banxico_SIE_Token")
 
 # Ejemplo de uso de la clase API_Banxico
-banxico_api = BanxicoSIE(BANXICO_TOKEN)
+banxico_api = BanxicoSIE(Banxico_SIE_Token)
 serie_id = ['SR17622', 'SF61745', 'SP68257', 'SF43718']
 
 # Obtener datos de la serie desde 2023-01-01 hasta hoy
