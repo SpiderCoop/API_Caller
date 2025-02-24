@@ -9,15 +9,15 @@ if __name__ == '__main__':
     import sys
     import os
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from API_Father.Base_api import Base_api
+    from API_Father.Base_api import BaseAPI
     
 else:
-    from ...API_Father.Base_api import Base_api
+    from ...API_Father.Base_api import BaseAPI
 
 
 # Clase -------------------------------------------------------------------------
 
-class API_INEGI(Base_api):
+class InegiAPI(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml")
 
@@ -36,7 +36,7 @@ class API_INEGI(Base_api):
         """
 
         # Definir url de API
-        endpoint = f"/CL_FREQ/{frequency_id}/es/BIE/2.0/{self._Base_api__api_key}?type=json"
+        endpoint = f"/CL_FREQ/{frequency_id}/es/BIE/2.0/{self._BaseAPI__api_key}?type=json"
 
         # Extraer y convertir datos
         data_json = self._make_request(endpoint=endpoint)
@@ -125,7 +125,7 @@ class API_INEGI(Base_api):
         """
         
         # Definir url de API
-        endpoint = f"/CL_UNIT/{unit_id}/es/BIE/2.0/{self._Base_api__api_key}?type=json"
+        endpoint = f"/CL_UNIT/{unit_id}/es/BIE/2.0/{self._BaseAPI__api_key}?type=json"
 
         # Extraer y convertir datos 
         data_json = self._make_request(endpoint=endpoint)
@@ -177,7 +177,7 @@ class API_INEGI(Base_api):
             raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
 
         # Definir url de API
-        endpoint = f"/INDICATOR/{','.join(serie_id)}/es/0700/{last_data}/BIE/2.0/{self._Base_api__api_key}?type=json"
+        endpoint = f"/INDICATOR/{','.join(serie_id)}/es/0700/{last_data}/BIE/2.0/{self._BaseAPI__api_key}?type=json"
 
         # Inicializar un DataFrame vacío para almacenar los datos y un diccionario para almacenar los metadatos
         series_df = pd.DataFrame()
@@ -234,7 +234,7 @@ if __name__ == '__main__':
     INEGI_Token = os.environ.get("INEGI_Token")
 
     # Ejemplo de uso de la clase API_INEGI
-    inegi_api = API_INEGI(INEGI_Token)
+    inegi_api = InegiAPI(INEGI_Token)
     serie_id=['736183','628208']
 
     # Obtener datos de las series de INEGI 628208, 736183 (PIB constante 2018 desestacionalizado var anual)

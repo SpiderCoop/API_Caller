@@ -12,14 +12,14 @@ if __name__ == '__main__':
     import os
     import sys
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from API_Father.Base_api import Base_api
+    from API_Father.Base_api import BaseAPI
     
 else:
-    from ...API_Father.Base_api import Base_api
+    from ...API_Father.Base_api import BaseAPI
 
 # Clase ---------------------------------------------------------------------------------------
 
-class API_Banxico(Base_api):
+class BanxicoAPI(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://www.banxico.org.mx/SieAPIRest/service/v1")
 
@@ -84,7 +84,7 @@ class API_Banxico(Base_api):
 
         # Encabezados para la solicitud con el token de la API
         headers = {
-            'Bmx-Token': self._Base_api__api_key
+            'Bmx-Token': self._BaseAPI__api_key
         }
         
         return endpoint, headers
@@ -118,7 +118,7 @@ class API_Banxico(Base_api):
         # Definir la URL de la API con el ID de la serie para obtener los metadatos de las series y realizar la solicitud
         endpoint_metadatos = f"/series/{','.join(serie_id)}"
         headers = {
-            'Bmx-Token': self._Base_api__api_key
+            'Bmx-Token': self._BaseAPI__api_key
         }
         metadata_json = self._make_request(endpoint_metadatos, headers=headers)
         
@@ -228,7 +228,7 @@ if __name__ == '__main__':
     BANXICO_TOKEN = os.environ.get("BANXICO_TOKEN")
 
     # Ejemplo de uso de la clase API_Banxico
-    banxico_api = API_Banxico(BANXICO_TOKEN)
+    banxico_api = BanxicoAPI(BANXICO_TOKEN)
     serie_id = ['SR17622', 'SF61745', 'SP68257', 'SF43718']
 
     # Obtener datos de la serie desde 2023-01-01 hasta hoy

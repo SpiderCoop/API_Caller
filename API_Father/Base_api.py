@@ -5,7 +5,7 @@ import requests
 
 # Clase ----------------------------------------------------------------------------------------
 
-class Base_api:
+class BaseAPI:
     def __init__(self,api_key, base_url):
         self.__api_key = api_key
         self.base_url = base_url
