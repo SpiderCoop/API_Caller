@@ -1,0 +1,1 @@
+from .bie import INEGI_BIE  # Importa directamente
