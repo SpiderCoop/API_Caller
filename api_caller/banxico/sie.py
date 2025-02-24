@@ -22,7 +22,14 @@ class Banxico_SIE(BaseAPI):
         }
 
 
-        # Validar los tipos de datos de los parámetros
+        # Validar los tipos de datos de las series y los parámetros
+        if isinstance(serie_id, str):
+            serie_id = [serie_id]
+        elif isinstance(serie_id, list) and all(isinstance(i, str) for i in serie_id):
+            pass
+        else:
+            raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
+
         if not isinstance(ult_obs, bool):
             raise ValueError(f"ult_obs debe ser un valor booleano.")
         
@@ -109,14 +116,6 @@ class Banxico_SIE(BaseAPI):
             >>> metadata = get_metadata(serie_id='SF43718')
         """
         
-        # Validar los tipos de datos de las series
-        if isinstance(serie_id, str):
-            serie_id = [serie_id]
-        elif isinstance(serie_id, list) and all(isinstance(i, str) for i in serie_id):
-            pass
-        else:
-            raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
-        
         # Definir la URL de la API con el ID de la serie para obtener los metadatos de las series y realizar la solicitud
         endpoint, headers = self._set_params(serie_id, get_metadata=True)
         metadata_json = self._make_request(endpoint, headers=headers)
@@ -166,15 +165,6 @@ class Banxico_SIE(BaseAPI):
             >>> df, dict = get_SIE_data(serie_id='SF43718', fecha_inicio='2020-01-01', fecha_fin='2023-01-01', variacion='PorcAnual')
         """
         
-        # Validar los tipos de datos de las series y los parámetros
-        if isinstance(serie_id, str):
-            serie_id = [serie_id]
-        elif isinstance(serie_id, list) and all(isinstance(i, str) for i in serie_id):
-            pass
-        else:
-            raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
-
-
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud
         endpoint_datos, headers = self._set_params(serie_id, ult_obs, fecha_inicio, fecha_fin, variacion, sin_decimales)
         data_json = self._make_request(endpoint_datos, headers=headers)
