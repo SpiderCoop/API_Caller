@@ -1,0 +1,1 @@
+from .fed import Fred  # Importa directamente
