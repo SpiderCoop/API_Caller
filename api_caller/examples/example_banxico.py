@@ -19,3 +19,8 @@ serie_id = ['SR17622', 'SF61745', 'SP68257', 'SF43718']
 serie = banxico_api.get_data(serie_id, fecha_inicio='2023-01-01',variacion='PorcAnual')
 print(serie.loc[pd.date_range(start='2024-01-01', end='2024-12-01', freq='QS-MAR').date,'SR17622'])
 print('\n')
+
+# Obtener datos de la serie desde 2023-01-01 hasta hoy
+serie = banxico_api.get_data(serie_id, ult_obs=True,variacion='PorcAnual')
+print(serie)
+print('\n')
