@@ -14,7 +14,7 @@ class Banxico_SIE(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://www.banxico.org.mx/SieAPIRest/service/v1")
 
-    def _set_params(self,serie_id:str | list,  ult_obs:bool=False, fecha_inicio:str='2000-01-01', fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False, get_metadata:bool=False) -> tuple:
+    def _set_params(self,serie_id:str | list,  ult_obs:bool=False, fecha_inicio:str=None, fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False, get_metadata:bool=False) -> tuple:
         
         # Encabezados para la solicitud con el token de la API
         headers = {
@@ -55,7 +55,7 @@ class Banxico_SIE(BaseAPI):
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series
         if ult_obs:
             # Validar que si ult_obs es True, no se proporcionen fechas de inicio y fin
-            if (fecha_inicio != '2000-01-01' or fecha_fin != datetime.today().strftime('%Y-%m-%d')):
+            if (fecha_inicio is not None or fecha_fin != datetime.today().strftime('%Y-%m-%d')):
                 raise ValueError("Si ult_obs es True, no se pueden proporcionar fechas de inicio y fin.")
             
             # Definir la URL de la API con el ID de la serie para obtener los datos de la última observación
@@ -131,7 +131,7 @@ class Banxico_SIE(BaseAPI):
     
 
     # Función para obtener los datos de una serie desde la API de Banxico
-    def get_data(self, serie_id:str | list, ult_obs:bool=False, fecha_inicio:str='2000-01-01', fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False) -> pd.DataFrame:
+    def get_data(self, serie_id:str | list, ult_obs:bool=False, fecha_inicio:str=None, fecha_fin:str=datetime.today().strftime('%Y-%m-%d'), variacion:str=None, sin_decimales:bool=False) -> pd.DataFrame:
         """
         Obtiene datos de series económicas desde la API de Banxico (SIE) y los devuelve en un DataFrame de pandas.
 
