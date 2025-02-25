@@ -16,6 +16,6 @@ fred_api = Fred(FRED_Token)
 serie_id='EXJPUS'
 
 # Obtener datos de las series de INEGI 628208, 736183 (PIB constante 2018 desestacionalizado var anual)
-serie = fred_api.get_data(serie_id,start_time='2023-01-01',end_time='2024-12-01')
+serie = fred_api.get_data(serie_id, last_data=True)
 print(serie)
 print('\n')

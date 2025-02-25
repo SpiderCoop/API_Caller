@@ -15,7 +15,6 @@ class Fred(BaseAPI):
         super().__init__(api_key, "https://api.stlouisfed.org/fred")
 
 
-
     def _set_params(self,serie_id:str | list, last_data:bool=False, start_time:str=None, end_time:str=datetime.today().strftime('%Y-%m-%d')) -> str:
         
         # Validar los tipos de datos de los parámetros
@@ -37,11 +36,10 @@ class Fred(BaseAPI):
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series
         
         if last_data:
-            """
             # Validar que si ult_obs es True, no se proporcionen fechas de inicio y fin
             if (start_time is not None or end_time != datetime.today().strftime('%Y-%m-%d')):
                 raise ValueError("If last_data is True, start_time and end_time cannot be provided.")
-            """
+            
             # Definir la URL de la API con el ID de la serie para obtener los datos de la última observación
             endpoint = f"/series?series_id={','.join(serie_id)}"
         
@@ -82,7 +80,7 @@ class Fred(BaseAPI):
     
 
     # Función para obtener los datos de una serie desde la API de Banxico
-    def get_data(self, serie_id:str | list, last_data:bool=False, start_time:str='2000-01-01', end_time:str=datetime.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
+    def get_data(self, serie_id:str | list, last_data:bool=False, start_time:str=None, end_time:str=datetime.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
         """
         Obtiene datos de series económicas desde la API de Banxico (SIE) y los devuelve en un DataFrame de pandas.
 
