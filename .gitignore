@@ -39,3 +39,4 @@ config/credentials.yml
 Project_toolbox.py
 .env
 *.pdf
+Pruebas.py
