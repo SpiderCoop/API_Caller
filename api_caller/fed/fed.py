@@ -35,11 +35,13 @@ class Fred(BaseAPI):
         
 
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series
+        
         if last_data:
+            """
             # Validar que si ult_obs es True, no se proporcionen fechas de inicio y fin
-            if (start_time != None or end_time != datetime.today().strftime('%Y-%m-%d')):
+            if (start_time is not None or end_time != datetime.today().strftime('%Y-%m-%d')):
                 raise ValueError("If last_data is True, start_time and end_time cannot be provided.")
-            
+            """
             # Definir la URL de la API con el ID de la serie para obtener los datos de la última observación
             endpoint = f"/series?series_id={','.join(serie_id)}"
         
@@ -118,11 +120,19 @@ class Fred(BaseAPI):
         endpoint = self._set_params(serie_id, last_data, start_time, end_time)
         data_json = self._make_request(endpoint)
 
-        # Inicializar un DataFrame vacío para almacenar los datos de las series
-        series_df = pd.DataFrame()
+        # Extraer los datos de la serie
+        serie_data = data_json['observations']
+        metadata = data_json
+
+        # Extraer los valores y las fechas
+        obs_values = [float(entry['value'].replace(",", "")) if entry['value'] != 'N/E' else pd.NA for entry in serie_data]
+        time_periods = [entry['date'] for entry in serie_data]
+
+        # Formatear los periodos de tiempo
+        time_periods_formatted = [pd.to_datetime(period).date() for period in time_periods]
         
-        for serie_data in data_json['observations']:
-            pass
+        # Agregar la observación a un DataFrame de pandas
+        serie = pd.Series(obs_values, index=time_periods_formatted, name=serie_id)
         
-        return data_json
+        return serie
 
