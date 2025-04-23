@@ -9,7 +9,7 @@ from urllib3.util import Retry
 # Clase ----------------------------------------------------------------------------------------
 
 class BaseAPI:
-    def __init__(self, api_key, base_url, timeout=10):
+    def __init__(self, api_key:str=None, base_url:str="", timeout:int=10):
         self.__api_key = api_key
         self.base_url = base_url
         self.timeout = timeout
