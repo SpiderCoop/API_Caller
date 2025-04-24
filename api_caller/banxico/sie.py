@@ -187,7 +187,7 @@ class Banxico_SIE(BaseAPI):
             time_periods = [entry['fecha'] for entry in serie_data]
 
             # Formatear los periodos de tiempo
-            time_periods_formatted = [pd.to_datetime(period, dayfirst=True).date() for period in time_periods]
+            time_periods_formatted = [pd.to_datetime(period, dayfirst=True) for period in time_periods]
 
             # Crear una serie de pandas con los datos obtenidos
             serie = pd.Series(obs_values, index=time_periods_formatted, name=serie_id)
