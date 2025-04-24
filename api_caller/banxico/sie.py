@@ -202,5 +202,9 @@ class Banxico_SIE(BaseAPI):
         # Ordenar el DataFrame por fecha
         series_df = series_df.sort_index()
 
+        # Verificar que el indice es del  tipo datetime
+        if not pd.api.types.is_datetime64_any_dtype(series_df.index):
+            series_df.index = pd.to_datetime(series_df.index)
+
         return series_df
 
