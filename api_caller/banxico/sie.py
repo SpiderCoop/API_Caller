@@ -191,10 +191,14 @@ class Banxico_SIE(BaseAPI):
 
             # Crear una serie de pandas con los datos obtenidos
             serie = pd.Series(obs_values, index=time_periods_formatted, name=serie_id)
+            
+            # Verificar que el indice es del  tipo datetime
+            if not pd.api.types.is_datetime64_any_dtype(serie.index):
+                serie.index = pd.to_datetime(serie.index)
 
             # Para series trimestrales se ajusta la fecha dos periodos hacia adelante. Esto es para que la fecha sea el último mes del trimestre
             if metadata[serie_id]['periodicidad'] == 'Trimestral':
-                serie.index = pd.to_datetime(serie.index) + relativedelta(months=2)
+                serie.index = serie.index + relativedelta(months=2)
 
             # Agregar la serie al DataFrame
             series_df = pd.concat([series_df, serie], axis=1, join='outer')
