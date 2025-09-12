@@ -15,22 +15,18 @@ class Fred(BaseAPI):
         super().__init__(api_key, "https://api.stlouisfed.org/fred")
 
 
-    def _set_series_params(self,serie_id:str | list, last_data:bool=False, start_date:str=None, end_date:str=pd.Timestamp.today().strftime('%Y-%m-%d'), get_metadata:bool=False) -> str:
+    def _set_series_params(self,serie_id:str, last_data:bool=False, start_date:str=None, end_date:str=pd.Timestamp.today().strftime('%Y-%m-%d'), get_metadata:bool=False) -> str:
         
         # Validar los tipos de datos de los parámetros
         if not isinstance(last_data, bool):
             raise ValueError(f"last_data must be a booleano.")
         
         # Validar los tipos de datos de las series y los parámetros
-        if isinstance(serie_id, str):
-            serie_id = [serie_id]
-        elif isinstance(serie_id, list) and all(isinstance(i, str) for i in serie_id):
-            pass
-        else:
+        if not isinstance(serie_id, str):
             raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
         
-        if len(serie_id) > 1 and last_data:
-            raise ValueError("last_data must be False if multiple series are provided.")
+        #if len(serie_id) > 1 and last_data:
+            #raise ValueError("last_data must be False if multiple series are provided.")
         
 
         # Devuelve la URL de la API si se solicitan los metadatos
@@ -150,22 +146,45 @@ class Fred(BaseAPI):
             >>> df, dict = get_SIE_data(serie_id='SF43718', fecha_inicio='2020-01-01', end_date='2023-01-01', variacion='PorcAnual')
         """
 
-        # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud
-        endpoint = self._set_series_params(serie_id, last_data, start_date, end_date)
-        data_json = self._make_request(endpoint)
+        # Validar los tipos de datos de las series y los parámetros
+        if isinstance(serie_id, str):
+            serie_id = [serie_id]
+        elif isinstance(serie_id, list) and all(isinstance(i, str) for i in serie_id):
+            pass
+        else:
+            raise ValueError("El 'serie_id' debe ser una cadena de texto o una lista de cadenas de texto.")
 
-        # Extraer los datos de la serie
-        serie_data = data_json['observations']
+        # Inicializar un DataFrame vacío para almacenar los datos de las series
+        series_df = pd.DataFrame()
 
-        # Extraer los valores y las fechas
-        obs_values = [float(entry['value'].replace(",", "")) if entry['value'] != 'N/E' else pd.NA for entry in serie_data]
-        time_periods = [entry['date'] for entry in serie_data]
+        for id in serie_id:
 
-        # Formatear los periodos de tiempo
-        time_periods_formatted = [pd.to_datetime(period).date() for period in time_periods]
-        
-        # Agregar la observación a un DataFrame de pandas
-        serie = pd.Series(obs_values, index=time_periods_formatted, name=serie_id)
+            # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud
+            endpoint = self._set_series_params(id, last_data, start_date, end_date)
+            data_json = self._make_request(endpoint)
+
+            # Extraer los datos de la serie
+            serie_data = data_json['observations']
+
+            # Extraer los valores y las fechas
+            obs_values = [float(entry['value'].replace(",", "")) if entry['value'] != '.' else pd.NA for entry in serie_data]
+            time_periods = [entry['date'] for entry in serie_data]
+
+            # Formatear los periodos de tiempo
+            time_periods_formatted = [pd.to_datetime(period).date() for period in time_periods]
+            
+            # Agregar la observación a un DataFrame de pandas
+            serie = pd.Series(obs_values, index=time_periods_formatted, name=id)
+
+            # Agregar la serie al DataFrame
+            series_df = pd.concat([series_df, serie], axis=1, join='outer')
+
+        # Ordenar el DataFrame por fecha
+        series_df = series_df.sort_index()
+
+        # Verificar que el indice es del  tipo datetime
+        if not pd.api.types.is_datetime64_any_dtype(series_df.index):
+            series_df.index = pd.to_datetime(series_df.index)
         
         return serie
 
