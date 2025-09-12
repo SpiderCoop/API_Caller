@@ -28,14 +28,12 @@ class Fred(BaseAPI):
         #if len(serie_id) > 1 and last_data:
             #raise ValueError("last_data must be False if multiple series are provided.")
         
-
         # Devuelve la URL de la API si se solicitan los metadatos
         if get_metadata:
-            endpoint = f"/series?series_id={','.join(serie_id)}&api_key={self._BaseAPI__api_key}&file_type=json"
-            return endpoint
+            pass
 
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series
-        endpoint = f"/series/observations?series_id="
+        endpoint = f"/series/observations?series_id={serie_id}"
 
         if last_data:
             # Validar que si ult_obs es True, no se proporcionen fechas de inicio y fin
@@ -43,7 +41,7 @@ class Fred(BaseAPI):
                 raise ValueError("If last_data is True, start_date and end_date cannot be provided.")
             
             # Definir la URL para que solo ponga como limite = 1 para obtener la última observación y ponemos el sort order en desc
-            endpoint += f"{','.join(serie_id)}&limit=1&sort_order=desc"
+            endpoint += f"&limit=1&sort_order=desc"
         
         else:
             # Definir los parámetros de las fechas si se proporcionan
@@ -68,7 +66,7 @@ class Fred(BaseAPI):
             date_params.append(f'observation_end={end_date}')
 
             if date_params:
-                endpoint += f"{','.join(serie_id)}&{'&'.join(date_params)}"
+                endpoint += f"&{'&'.join(date_params)}"
 
         # Agregar el token de la API a la URL
         endpoint += f"&api_key={self._BaseAPI__api_key}&file_type=json"
