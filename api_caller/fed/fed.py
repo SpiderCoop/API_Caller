@@ -15,7 +15,7 @@ class Fred(BaseAPI):
         super().__init__(api_key, "https://api.stlouisfed.org/fred")
 
 
-    def _set_series_params(self,serie_id:str | list, last_data:bool=False, start_time:str=None, end_time:str=datetime.today().strftime('%Y-%m-%d'), get_metadata:bool=False) -> str:
+    def _set_series_params(self,serie_id:str | list, last_data:bool=False, start_date:str=None, end_date:str=pd.Timestamp.today().strftime('%Y-%m-%d'), get_metadata:bool=False) -> str:
         
         # Validar los tipos de datos de los parámetros
         if not isinstance(last_data, bool):
@@ -43,8 +43,8 @@ class Fred(BaseAPI):
 
         if last_data:
             # Validar que si ult_obs es True, no se proporcionen fechas de inicio y fin
-            if (start_time is not None or end_time != datetime.today().strftime('%Y-%m-%d')):
-                raise ValueError("If last_data is True, start_time and end_time cannot be provided.")
+            if (start_date is not None or end_date != pd.Timestamp.today().strftime('%Y-%m-%d')):
+                raise ValueError("If last_data is True, start_date and end_date cannot be provided.")
             
             # Definir la URL para que solo ponga como limite = 1 para obtener la última observación y ponemos el sort order en desc
             endpoint += f"{','.join(serie_id)}&limit=1&sort_order=desc"
@@ -53,23 +53,23 @@ class Fred(BaseAPI):
             # Definir los parámetros de las fechas si se proporcionan
             date_params = []
             
-            if start_time != None:
+            if start_date != None:
                 try:
-                    start_time = str(datetime.strptime(start_time, '%Y-%m-%d').date())
-                    end_time = str(datetime.strptime(end_time, '%Y-%m-%d').date())
+                    start_date = pd.to_datetime(start_date).strftime('%Y-%m-%d')
+                    end_date = pd.to_datetime(end_date).strftime('%Y-%m-%d')
                 except ValueError:
                     raise ValueError("The provided dates must be in format 'YYYY-MM-DD'.")
             
                 # En caso de que la fecha de inicio es mayor a la fecha de fin, se invierten las variables
-                if start_time > end_time:
-                    start_time, end_time = end_time, start_time
-                    print('start_time is greater than end_time. The dates have been switched.')
+                if start_date > end_date:
+                    start_date, end_date = end_date, start_date
+                    print('start_date is greater than end_date. The dates have been switched.')
 
             # Agregar los parámetros de las fechas a la URL si se proporcionan
-            if start_time != None:
-                date_params.append(f'observation_start={start_time}')
+            if start_date != None:
+                date_params.append(f'observation_start={start_date}')
             
-            date_params.append(f'observation_end={end_time}')
+            date_params.append(f'observation_end={end_date}')
 
             if date_params:
                 endpoint += f"{','.join(serie_id)}&{'&'.join(date_params)}"
@@ -80,7 +80,7 @@ class Fred(BaseAPI):
         return endpoint
     
 
-    def get_series_metadata(self, serie_id:str | list) -> dict:
+    def get_series_metadata(self, serie_id:str | list) -> dict: # Hace falta modificar
         """
         Obtiene los metadatos de una serie desde la API de la FED.
 
@@ -116,7 +116,7 @@ class Fred(BaseAPI):
     
 
     # Función para obtener los datos de una serie desde la API
-    def get_series_data(self, serie_id:str | list, last_data:bool=False, start_time:str=None, end_time:str=datetime.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
+    def get_series_data(self, serie_id:str | list, last_data:bool=False, start_date:str=None, end_date:str=pd.Timestamp.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
         """
         Obtiene datos de series económicas desde la API de Banxico (SIE) y los devuelve en un DataFrame de pandas.
 
@@ -127,7 +127,7 @@ class Fred(BaseAPI):
                                     Por defecto es False.
             fecha_inicio (datetime, optional): La fecha de inicio de consulta tipo datetime para obtener datos en formato 'YYYY-MM-DD'. 
                                             Por defecto es '2000-01-01'.
-            end_time (datetime, optional): La fecha de fin de consulta tipo datetime  para obtener datos en formato 'YYYY-MM-DD'.
+            end_date (datetime, optional): La fecha de fin de consulta tipo datetime  para obtener datos en formato 'YYYY-MM-DD'.
                                             Por defecto es la fecha actual.
             variacion (str, optional): Parámetro opcional que define si se desea obtener los incrmentos porcentuales de datos de la serie con respecto a observaciones anteriores
                                     ('PorcObsAnt', 'PorcAnual', 'PorcAcumAnual'). Por defecto es None.
@@ -147,11 +147,11 @@ class Fred(BaseAPI):
             >>> df, dict = get_SIE_data(serie_id='SF43718', ult_obs=True)
 
             Obtener un rango de fechas para una serie histórica de su variación anual:
-            >>> df, dict = get_SIE_data(serie_id='SF43718', fecha_inicio='2020-01-01', end_time='2023-01-01', variacion='PorcAnual')
+            >>> df, dict = get_SIE_data(serie_id='SF43718', fecha_inicio='2020-01-01', end_date='2023-01-01', variacion='PorcAnual')
         """
 
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud
-        endpoint = self._set_series_params(serie_id, last_data, start_time, end_time)
+        endpoint = self._set_series_params(serie_id, last_data, start_date, end_date)
         data_json = self._make_request(endpoint)
 
         # Extraer los datos de la serie
@@ -169,7 +169,8 @@ class Fred(BaseAPI):
         
         return serie
 
-    def get_releases_data(self, serie_id:str | list, last_data:bool=False, start_time:str=None, end_time:str=datetime.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
+
+    def get_releases_data(self, serie_id:str | list, last_data:bool=False, start_date:str=None, end_date:str=datetime.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
         """
         Obtiene datos de series económicas desde la API de Banxico (SIE) y los devuelve en un DataFrame de pandas.
 
@@ -180,7 +181,7 @@ class Fred(BaseAPI):
                                     Por defecto es False.
             fecha_inicio (datetime, optional): La fecha de inicio de consulta tipo datetime para obtener datos en formato 'YYYY-MM-DD'. 
                                             Por defecto es '2000-01-01'.
-            end_time (datetime, optional): La fecha de fin de consulta tipo datetime  para obtener datos en formato 'YYYY-MM-DD'.
+            end_date (datetime, optional): La fecha de fin de consulta tipo datetime  para obtener datos en formato 'YYYY-MM-DD'.
                                             Por defecto es la fecha actual.
             variacion (str, optional): Parámetro opcional que define si se desea obtener los incrmentos porcentuales de datos de la serie con respecto a observaciones anteriores
                                     ('PorcObsAnt', 'PorcAnual', 'PorcAcumAnual'). Por defecto es None.
@@ -200,11 +201,11 @@ class Fred(BaseAPI):
             >>> df, dict = get_SIE_data(serie_id='SF43718', ult_obs=True)
 
             Obtener un rango de fechas para una serie histórica de su variación anual:
-            >>> df, dict = get_SIE_data(serie_id='SF43718', fecha_inicio='2020-01-01', end_time='2023-01-01', variacion='PorcAnual')
+            >>> df, dict = get_SIE_data(serie_id='SF43718', fecha_inicio='2020-01-01', end_date='2023-01-01', variacion='PorcAnual')
         """
 
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud
-        endpoint = self._set_series_params(serie_id, last_data, start_time, end_time)
+        endpoint = self._set_series_params(serie_id, last_data, start_date, end_date)
         data_json = self._make_request(endpoint)
 
         # Extraer los datos de la serie
