@@ -46,12 +46,17 @@ class Fred(BaseAPI):
         else:
             # Definir los parámetros de las fechas si se proporcionan
             date_params = []
-            end_date = pd.to_datetime(end_date).strftime('%Y-%m-%d')
+            
+            try:
+                end_date = pd.to_datetime(end_date).strftime('%Y-%m-%d')
+            except ValueError:
+                raise ValueError("The provided dates must be in format 'YYYY-MM-DD'.")
+            
             
             if start_date != None:
+                
                 try:
                     start_date = pd.to_datetime(start_date).strftime('%Y-%m-%d')
-
                 except ValueError:
                     raise ValueError("The provided dates must be in format 'YYYY-MM-DD'.")
             

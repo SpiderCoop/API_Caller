@@ -141,7 +141,7 @@ class INEGI_BIE(BaseAPI):
 
         return time_periods_formatted
     
-    def _set_params(self, serie_id:str | list, last_data:bool=False) -> str:
+    def _set_series_params(self, serie_id:str | list, last_data:bool=False) -> str:
         """
         Establece los parámetros necesarios para realizar una solicitud a la API de INEGI (BIE) y los devuelve en un diccionario.
 
@@ -181,7 +181,7 @@ class INEGI_BIE(BaseAPI):
         return endpoint
 
 
-    def get_metadata(self, serie_id:str | list) -> dict:
+    def get_series_metadata(self, serie_id:str | list) -> dict:
         """
         Obtiene la metadata de una serie económica o estadística desde la API de INEGI (BIE) y la devuelve en un diccionario.
 
@@ -197,12 +197,12 @@ class INEGI_BIE(BaseAPI):
 
         Example:
             Obtener la metadata de una serie:
-            >>> serie_info = get_metadata('736183')
+            >>> serie_info = get_series_metadata('736183')
 
         """
 
         # Definir url de API y realizar la solicitud
-        endpoint = self._set_params(serie_id, last_data=False)
+        endpoint = self._set_series_params(serie_id, last_data=False)
         data_json = self._make_request(endpoint=endpoint)
 
         # Inicializar un diccionario vacío para almacenar los metadatos
@@ -229,7 +229,7 @@ class INEGI_BIE(BaseAPI):
 
 
     # Función para obtener los datos de una serie desde la API de INEGI
-    def get_data(self, serie_id:str | list, last_data:bool=False) -> pd.DataFrame:
+    def get_series_data(self, serie_id:str | list, last_data:bool=False) -> pd.DataFrame:
         """
         Obtiene datos de series económicas y estadísticas desde la API de INEGI (BIE) y los devuelve en un DataFrame de pandas.
 
@@ -254,7 +254,7 @@ class INEGI_BIE(BaseAPI):
         """
 
         # Definir url de API y realizar la solicitud
-        endpoint = self._set_params(serie_id, last_data)
+        endpoint = self._set_series_params(serie_id, last_data)
         data_json = self._make_request(endpoint=endpoint)
 
         # Inicializar un DataFrame vacío para almacenar los datos
