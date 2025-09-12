@@ -192,7 +192,7 @@ class Banxico_SIE(BaseAPI):
             serie_data = serie_data['datos']
 
             # Extraer los valores y las fechas
-            obs_values = [float(entry['dato'].replace(",", "")) if entry['dato'] != '.' else pd.NA for entry in serie_data]
+            obs_values = [float(entry['dato'].replace(",", "")) if entry['dato'] != 'N/E' else pd.NA for entry in serie_data]
             time_periods = [entry['fecha'] for entry in serie_data]
 
             # Formatear los periodos de tiempo
