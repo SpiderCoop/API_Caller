@@ -13,13 +13,13 @@ FRED_Token = os.environ.get("FRED_Token")
 
 # Ejemplo de uso de la clase API_INEGI
 fred_api = Fred(FRED_Token)
-serie_id='IRA'
+serie_id=['DFF', 'IRA']
 
 # Obtener datos de las series de INEGI 628208, 736183 (PIB constante 2018 desestacionalizado var anual)
-serie = fred_api.get_series_data(serie_id)
-metadata = fred_api.get_series_metadata(serie_id)
+serie = fred_api.get_series_data(serie_id, end_date=pd.Timestamp.today())
+#metadata = fred_api.get_series_metadata(serie_id)
 
-print(serie)
+print(serie.loc['2025-07-01'])
 print('\n')
-print(metadata)
+#print(metadata)
 print('\n')

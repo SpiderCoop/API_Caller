@@ -46,11 +46,12 @@ class Fred(BaseAPI):
         else:
             # Definir los parámetros de las fechas si se proporcionan
             date_params = []
+            end_date = pd.to_datetime(end_date).strftime('%Y-%m-%d')
             
             if start_date != None:
                 try:
                     start_date = pd.to_datetime(start_date).strftime('%Y-%m-%d')
-                    end_date = pd.to_datetime(end_date).strftime('%Y-%m-%d')
+
                 except ValueError:
                     raise ValueError("The provided dates must be in format 'YYYY-MM-DD'.")
             
@@ -184,7 +185,7 @@ class Fred(BaseAPI):
         if not pd.api.types.is_datetime64_any_dtype(series_df.index):
             series_df.index = pd.to_datetime(series_df.index)
         
-        return serie
+        return series_df
 
 
     def get_releases_data(self, serie_id:str | list, last_data:bool=False, start_date:str=None, end_date:str=datetime.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
