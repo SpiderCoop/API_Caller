@@ -130,14 +130,11 @@ class INEGI_BIE(BaseAPI):
 
         elif frequency_id == 12: # Diaria
             
-            time_periods_formatted = [pd.to_datetime(period, dayfirst=True).strftime('%Y-%m-%d') for period in time_periods]
+            time_periods_formatted = [pd.to_datetime(period, dayfirst=True) for period in time_periods]
 
         elif frequency_id == 13: # Irregular
             
             raise ValueError('Frecuencia no soportada actualmente. Es necesario modificar el codigo para soportar esta frecuencia.')
-
-        # Cambiamos el tipo de datos a datetime
-        time_periods_formatted = pd.to_datetime(time_periods_formatted).date
 
         return time_periods_formatted
     

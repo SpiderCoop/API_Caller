@@ -17,6 +17,6 @@ serie_id=['736183','628208']
 
 # Obtener datos de las series de INEGI 628208, 736183 (PIB constante 2018 desestacionalizado var anual)
 serie = inegi_api.get_series_data(serie_id,last_data=False)
-print(serie.loc[pd.date_range(start='2024-01-01', end='2024-12-01', freq='QS-MAR').date,'736183'])
+print(serie.loc[pd.date_range(start='2024-01-01', end='2024-12-01', freq='QS-MAR'),'736183'])
 print('\n')
 
