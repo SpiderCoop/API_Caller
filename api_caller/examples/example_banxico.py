@@ -16,11 +16,14 @@ banxico_api = Banxico_SIE(Banxico_SIE_Token)
 serie_id = ['SR17622', 'SF61745', 'SP68257', 'SF43718']
 
 # Obtener datos de la serie desde 2023-01-01 hasta hoy
-serie = banxico_api.get_series_data(serie_id, start_date='2023-01-01',variacion='PorcAnual')
+serie = banxico_api.get_series_data(serie_id, start_date='2023-03-01',percentage_change='PorcAnual')
+
+print(serie)
+print('\n')
 print(serie.loc[pd.date_range(start='2024-01-01', end='2024-12-01', freq='QS-MAR').date,'SR17622'])
 print('\n')
 
-# Obtener datos de la serie desde 2023-01-01 hasta hoy
-serie = banxico_api.get_series_data(serie_id, ult_obs=True,variacion='PorcAnual')
+# Obtener datos de la serie 
+serie = banxico_api.get_series_data(serie_id, last_data=True,percentage_change='PorcAnual')
 print(serie)
 print('\n')

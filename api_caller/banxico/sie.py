@@ -176,7 +176,7 @@ class Banxico_SIE(BaseAPI):
 
         # Ajuste para datos trimestrales
         if not last_data:
-            start_date = start_date + pd.DateOffset(months=-2)
+            start_date = pd.to_datetime(start_date) + pd.DateOffset(months=-2)
         
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud
         endpoint_datos, headers = self._set_series_params(serie_id, last_data, start_date, end_date, percentage_change, no_decimals)
@@ -221,7 +221,8 @@ class Banxico_SIE(BaseAPI):
 
         # Ajustamos la fecha a su dato original
         if not last_data:
-            start_date = start_date + pd.DateOffset(months=2)
+            start_date = pd.to_datetime(start_date) + pd.DateOffset(months=2)
+            end_date = pd.to_datetime(end_date)
             series_df = series_df.loc[start_date:end_date]
 
         # Verificar que el indice es del  tipo datetime
