@@ -173,6 +173,10 @@ class Banxico_SIE(BaseAPI):
             Obtener un rango de fechas para una serie histórica de su variación anual:
             >>> df, dict = get_SIE_data(serie_id='SF43718', start_date='2020-01-01', end_date='2023-01-01', percentage_change='PorcAnual')
         """
+
+        # Ajuste para datos trimestrales
+        if not last_data:
+            start_date += pd.DateOffset(months=-2)
         
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud
         endpoint_datos, headers = self._set_series_params(serie_id, last_data, start_date, end_date, percentage_change, no_decimals)
@@ -214,6 +218,11 @@ class Banxico_SIE(BaseAPI):
 
         # Ordenar el DataFrame por fecha
         series_df = series_df.sort_index()
+
+        # Ajustamos la fecha a su dato original
+        if not last_data:
+            start_date += pd.DateOffset(months=2)
+            series_df = series_df.loc[start_date:end_date]
 
         # Verificar que el indice es del  tipo datetime
         if not pd.api.types.is_datetime64_any_dtype(series_df.index):
