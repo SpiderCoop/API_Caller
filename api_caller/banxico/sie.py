@@ -2,10 +2,6 @@
 # Librerias necesarias -------------------------------------------------------------------------
 
 import pandas as pd
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-import requests
-
 from ..baseapi.baseapi import BaseAPI
 
 # Clase ---------------------------------------------------------------------------------------
@@ -14,7 +10,7 @@ class Banxico_SIE(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://www.banxico.org.mx/SieAPIRest/service/v1")
 
-    def _set_series_params(self,serie_id:str | list,  last_data:bool=False, start_date:str=None, end_date:str=pd.Timestamp.today().strftime('%Y-%m-%d'), percentage_change:str=None, no_decimals:bool=False, get_series_metadata:bool=False) -> tuple:
+    def _set_series_params(self, serie_id:str | list,  last_data:bool=False, start_date:str=None, end_date:str=pd.Timestamp.today().strftime('%Y-%m-%d'), percentage_change:str=None, no_decimals:bool=False, get_series_metadata:bool=False) -> tuple:
         
         # Encabezados para la solicitud con el token de la API
         headers = {
