@@ -3,29 +3,35 @@ name = "econ-api-bridge"
 version = "0.1.2"
 description = "econ-api-bridge es un conjunto de funciones diseñadas para facilitar la conexión con distintas APIs y obtener información económica, estadística y financiera de diversas fuentes. Este proyecto permite automatizar la extracción de datos y estructurarlos de manera eficiente para su análisis y uso en distintos entornos."
 authors = [
-    {name = "SpiderCoop",email = "david.jimenez.cooper@gmail.com"}
+    {name = "SpiderCoop", email = "david.jimenez.cooper@gmail.com"}
 ]
-license = "Apache 2.0"
+license = "Apache-2.0"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "certifi (>=2025.1.31)",
-    "charset-normalizer (>=3.4.1)",
-    "idna (>=3.10)",
-    "numpy (>=2.2.3)",
-    "pandas (>=2.2.3)",
-    "python-dateutil (>=2.9.0.post0)",
-    "python-dotenv (>=1.0.1)",
-    "pytz (>=2025.1)",
-    "requests (>=2.32.3)",
-    "setuptools (>=75.8.0)",
-    "six (>=1.17.0)",
-    "tzdata (>=2025.1)",
-    "urllib3 (>=2.3.0)",
-    "wheel (==0.45.1)"
+    "pandas>=3.0.5",
+    "python-dotenv>=1.2.3",
+    "requests>=2.34.2",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.5",
+]
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py312"
+extend-exclude = ["alembic"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "S"]
+extend-ignore = ["E501", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignorar el uso de 'assert' (S101) y el uso de contraseñas de prueba (S105, S106, S107)
+"tests/**/*.py" = ["S101", "S105", "S106", "S107"]
