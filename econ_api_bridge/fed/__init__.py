@@ -1,1 +1,1 @@
-from .fed import Fred  # Importa directamente
+from .fed import Fred as Fred

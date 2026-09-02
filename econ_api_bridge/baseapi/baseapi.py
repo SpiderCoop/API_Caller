@@ -4,21 +4,22 @@ Author:        David Jiménez Cooper - SpiderCoop
 Date:          2026-09-02
 """
 
-import requests
 import logging
+
+import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
 
 class BaseAPI:
-    def __init__(self, api_key:str=None, base_url:str="", timeout:int=10):
+    def __init__(self, api_key: str = None, base_url: str = "", timeout: int = 10):
         self.__api_key = api_key
         self.base_url = base_url
         self.timeout = timeout
         self.session = requests.Session()
         retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
-        self.session.mount('http://', HTTPAdapter(max_retries=retries))
-        self.session.mount('https://', HTTPAdapter(max_retries=retries))
+        self.session.mount("http://", HTTPAdapter(max_retries=retries))
+        self.session.mount("https://", HTTPAdapter(max_retries=retries))
         logging.basicConfig(level=logging.INFO)
 
     def _make_request(self, endpoint, headers=None, params=None, data=None, json=None):
@@ -29,25 +30,24 @@ class BaseAPI:
             headers = {}
         if params is None:
             params = {}
-        
-        if self._BaseAPI__api_key:
-            headers['Authorization'] = f"Bearer {self._BaseAPI__api_key}"
 
+        if self._BaseAPI__api_key:
+            headers["Authorization"] = f"Bearer {self._BaseAPI__api_key}"
 
         try:
             response = self.session.request(
-                method='GET',
+                method="GET",
                 url=url,
                 headers=headers,
                 params=params,
                 data=data,
                 json=json,
-                timeout=self.timeout
+                timeout=self.timeout,
             )
             response.raise_for_status()
 
             return response.json()
-        
+
         except requests.exceptions.HTTPError as http_err:
             logging.error(f"HTTP error occurred: {http_err}")
             raise
@@ -57,4 +57,3 @@ class BaseAPI:
         except ValueError as json_err:
             logging.error(f"JSON decode error: {json_err}")
             raise
-
