@@ -1,0 +1,1 @@
+"""Banxico tests module."""
