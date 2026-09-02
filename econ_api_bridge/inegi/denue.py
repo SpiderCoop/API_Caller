@@ -1,12 +1,12 @@
-# Librerias necesarias -------------------------------------------------------------------------
+"""
+Description:   Class to interact with the DENUE API of INEGI. Provides methods to search for establishments and retrieve their details.
+Author:        David Jiménez Cooper - SpiderCoop
+Date:          2026-09-02
+"""
 
 import pandas as pd
-from datetime import datetime, date
-import requests
-
 from econ_api_bridge.baseapi.baseapi import BaseAPI
 
-# Clase -------------------------------------------------------------------------
 
 class INEGI_DENUE(BaseAPI):
     def __init__(self, api_key):

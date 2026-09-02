@@ -1,13 +1,12 @@
-
-# Librerias necesarias -------------------------------------------------------------------------
+"""
+Description:   Class to interact with the BIE API of INEGI. Provides methods to handle frequencies, units, and time periods of the series.
+Author:        David Jiménez Cooper - SpiderCoop
+Date:          2026-09-02
+"""
 
 import pandas as pd
-from datetime import datetime, date
-import requests
-
 from econ_api_bridge.baseapi.baseapi import BaseAPI
 
-# Clase -------------------------------------------------------------------------
 
 class INEGI_BIE(BaseAPI):
     def __init__(self, api_key):
@@ -89,28 +88,28 @@ class INEGI_BIE(BaseAPI):
             time_periods_formatted = []
             for period in time_periods:
                 year, quarter = map(int, period.split('/'))
-                time_periods_formatted.append(str(date(year,quarter*3,1)))
+                time_periods_formatted.append(pd.Timestamp(year=year, month=quarter * 3, day=1).date())
 
         elif frequency_id == 5: # Cuatrimestral
             
             time_periods_formatted = []
             for period in time_periods:
                 year, quarter = map(int, period.split('/'))
-                time_periods_formatted.append(str(date(year,quarter*3,1)))
+                time_periods_formatted.append(pd.Timestamp(year=year, month=quarter * 3, day=1).date())
         
         elif frequency_id == 6: # Trimestral
 
             time_periods_formatted = []
             for period in time_periods:
                 year, quarter = map(int, period.split('/'))
-                time_periods_formatted.append(str(date(year,quarter*3,1)))
+                time_periods_formatted.append(pd.Timestamp(year=year, month=quarter * 3, day=1).date())
         
         elif frequency_id == 7: # Bimestral
 
             time_periods_formatted = []
             for period in time_periods:
                 year, quarter = map(int, period.split('/'))
-                time_periods_formatted.append(str(date(year,quarter*3,1)))
+                time_periods_formatted.append(pd.Timestamp(year=year, month=quarter * 3, day=1).date())
 
         elif frequency_id == 8: # Mensual
             

@@ -1,12 +1,14 @@
-
-# Librerias necesarias -------------------------------------------------------------------------
+"""
+Description:   Base class for making API requests.
+Author:        David Jiménez Cooper - SpiderCoop
+Date:          2026-09-02
+"""
 
 import requests
 import logging
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
-# Clase ----------------------------------------------------------------------------------------
 
 class BaseAPI:
     def __init__(self, api_key:str=None, base_url:str="", timeout:int=10):

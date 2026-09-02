@@ -1,14 +1,12 @@
-
-# Librerias necesarias -------------------------------------------------------------------------
+"""
+Description:   Write a brief description of the script's purpose here.
+Author:        David Jiménez Cooper - SpiderCoop
+Date:          2026-09-02
+"""
 
 import pandas as pd
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-import requests
-
 from econ_api_bridge.baseapi.baseapi import BaseAPI
 
-# Clase ---------------------------------------------------------------------------------------
 
 class Fred(BaseAPI):
     def __init__(self, api_key):
@@ -193,16 +191,16 @@ class Fred(BaseAPI):
         return series_df
 
 
-    def get_releases_data(self, serie_id:str | list, last_data:bool=False, start_date:str=None, end_date:str=datetime.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
+    def get_releases_data(self, serie_id:str | list, last_data:bool=False, start_date:str=None, end_date:str=pd.Timestamp.today().strftime('%Y-%m-%d')) -> pd.DataFrame:
         """
-        Obtiene datos de series económicas desde la API de Banxico (SIE) y los devuelve en un DataFrame de pandas.
+        Obtiene datos de series económicas desde la API de la Reserva Federal (FED) y los devuelve en un DataFrame de pandas.
 
         Args:
-            serie_id (str | list): El ID de la serie o una lista de IDs de series a consultar desde la API de Banxico. 
+            serie_id (str | list): El ID de la serie o una lista de IDs de series a consultar desde la API de la FED. 
                                 Si se proporciona un solo ID, puede ser una cadena de texto (str).
-            ult_obs (bool, optional): Si se establece en True, obtendrá solo las últimas observaciones disponibles de la serie.
+            last_data (bool, optional): Si se establece en True, obtendrá solo las últimas observaciones disponibles de la serie.
                                     Por defecto es False.
-            fecha_inicio (datetime, optional): La fecha de inicio de consulta tipo datetime para obtener datos en formato 'YYYY-MM-DD'. 
+            start_date (datetime, optional): La fecha de inicio de consulta tipo datetime para obtener datos en formato 'YYYY-MM-DD'. 
                                             Por defecto es '2000-01-01'.
             end_date (datetime, optional): La fecha de fin de consulta tipo datetime  para obtener datos en formato 'YYYY-MM-DD'.
                                             Por defecto es la fecha actual.
@@ -217,14 +215,14 @@ class Fred(BaseAPI):
             dict: Un diccionario con informacion de la serie
                             
         Raises:
-            Exception: Si la solicitud a la API de Banxico falla, devuelve un mensaje con el código de error y la respuesta.
+            Exception: Si la solicitud a la API de la FED falla, devuelve un mensaje con el código de error y la respuesta.
 
         Example:
             Obtener la última observación de una serie:
-            >>> df, dict = get_SIE_data(serie_id='SF43718', ult_obs=True)
+            >>> df, dict = self.get_SIE_data(serie_id='SF43718', last_data=True)
 
             Obtener un rango de fechas para una serie histórica de su variación anual:
-            >>> df, dict = get_SIE_data(serie_id='SF43718', fecha_inicio='2020-01-01', end_date='2023-01-01', variacion='PorcAnual')
+            >>> df, dict = self.get_SIE_data(serie_id='SF43718', start_date='2020-01-01', end_date='2023-01-01', variacion='PorcAnual')
         """
 
         # Definir la URL de la API con el ID de la serie para obtener los datos de las series y realizar la solicitud

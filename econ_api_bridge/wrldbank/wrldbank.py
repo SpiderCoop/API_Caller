@@ -1,24 +1,25 @@
+"""
+Description:   Class to interact with the World Bank API. Provides methods to retrieve series data for specific indicators and countries.
+Author:        David Jiménez Cooper - SpiderCoop
+Date:          2026-09-02
+"""
 
-# Librerias necesarias -------------------------------------------------------------------------
 
-import requests
 import pandas as pd
-
 from econ_api_bridge.baseapi.baseapi import BaseAPI
 
-# Clase ---------------------------------------------------------------------------------------
 
-class WorldBank:
+class WorldBank(BaseAPI):
     def __init__(self, api_key):
         super().__init__(api_key, "https://api.worldbank.org/v2")
 
-    def get_data(self, indicator_id, country_code, start_date, end_date):
-        url = f'{self.base_url}/country/{country_code}/indicator/{indicator_id}'
+    def get_series_data(self, indicator_id, country_code, start_date, end_date):
+        url = f'{self._BaseAPI__base_url}/country/{country_code}/indicator/{indicator_id}'
         params = {
             'format': 'json',
             'date': f'{start_date}:{end_date}',
             'per_page': 100,
-            'api_key': self.api_key
+            'api_key': self._BaseAPI__api_key
         }
 
         response = requests.get(url, params=params)

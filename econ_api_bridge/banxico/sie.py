@@ -1,10 +1,11 @@
-
-# Librerias necesarias -------------------------------------------------------------------------
+"""
+Description:   Class to interact with the API of the Economic Information System (SIE) of the Bank of Mexico.
+Author:        David Jiménez Cooper - SpiderCoop
+Date:          2026-09-02
+"""
 
 import pandas as pd
 from econ_api_bridge.baseapi.baseapi import BaseAPI
-
-# Clase ---------------------------------------------------------------------------------------
 
 class Banxico_SIE(BaseAPI):
     def __init__(self, api_key):

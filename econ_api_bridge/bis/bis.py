@@ -1,12 +1,12 @@
-
-# Librerias necesarias -------------------------------------------------------------------------
-
-import json
+"""
+Description:   Class to interact with the API of the Bank for International Settlements (BIS).
+Author:        David Jiménez Cooper - SpiderCoop
+Date:          2026-09-02
+"""
 
 import pandas as pd
 from econ_api_bridge.baseapi.baseapi import BaseAPI
 
-# Clase ---------------------------------------------------------------------------------------
 
 class BIS_API(BaseAPI):
     def __init__(self, api_key:str=None):
