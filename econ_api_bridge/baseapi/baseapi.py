@@ -13,13 +13,16 @@ from urllib3.util import Retry
 
 class BaseAPI:
     def __init__(self, api_key: str = None, base_url: str = "", timeout: int = 10):
+
         self.__api_key = api_key
         self.base_url = base_url
         self.timeout = timeout
         self.session = requests.Session()
+
         retries = Retry(total=5, backoff_factor=1, status_forcelist=[502, 503, 504])
-        self.session.mount("http://", HTTPAdapter(max_retries=retries))
-        self.session.mount("https://", HTTPAdapter(max_retries=retries))
+        adapter = HTTPAdapter(max_retries=retries)
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
         logging.basicConfig(level=logging.INFO)
 
     def _make_request(self, endpoint, headers=None, params=None, data=None, json=None):
